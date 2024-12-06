@@ -1,5 +1,6 @@
 package com.chan.account;
 
+import com.chan.account.JDBC.JdbcUtils;
 import com.chan.account.model.Account;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class AccountManager {
 //        encrypt password before adding to list
       account.setPaswwordHahed(account.BcryptPassword());
         accounts.add(account);
+    }
+    public static void addAccountsToDB(){
+       JdbcUtils.insertAccounts(accounts);
     }
 
     public static void accoundByNameAndPassword(String accountName,String password){
