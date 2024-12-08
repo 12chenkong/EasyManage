@@ -39,17 +39,18 @@ public class AccountManager {
       if(account.getAccountName()==null)
           System.out.println("Account not found!!!");
       else {
-          System.out.println("Here is Your account: ");
-          System.out.println(account);
+          System.out.println("Here is Your account: \n");
+          System.out.println("Account name: "+account.getAccountName());
+          System.out.println("Username: "+account.getUserName());
+          System.out.println("Email: "+account.getEmail());
+          System.out.println("Balance: "+account.getBalance()+"$");
       }
 
     }
 
     public  static void showAllAccounts(){
         System.out.println("All accounts: ");
-        for (Account account :accounts){
-            System.out.println(account);
-        }
+        JdbcUtils.fetchAllAccounts();
     }
 
     public static void deleteAccountByName(String AccountName){
