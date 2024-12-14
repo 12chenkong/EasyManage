@@ -9,11 +9,15 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class AccountManager {
+    // storing record of accounts
    static List<Account>accounts=new ArrayList<>();
 //    methods
   static Scanner scanner=new Scanner(System.in);
    public static void addAccount(){
+       System.out.println("Enter account Id: ");
+       int account_id=scanner.nextInt();
         System.out.println("Enter account Name: ");
+        scanner.nextLine();
         String accountName=scanner.nextLine();
         System.out.println("Enter your name: ");
         String name=scanner.nextLine();
@@ -24,7 +28,7 @@ public class AccountManager {
         System.out.println("Enter your balance: ");
         double balances=scanner.nextDouble();
        scanner.nextLine();
-        Account account=new Account(accountName,name,email,password,balances);
+        Account account=new Account(accountName,name,email,password,balances,account_id);
 //        encrypt password before adding to list
       account.setPaswwordHahed(account.BcryptPassword());
         accounts.add(account);
@@ -33,7 +37,6 @@ public class AccountManager {
     public static void addAccountsToDB(){
        JdbcUtils.insertAccounts(accounts);
     }
-
     public static void findAccoundByName(String username){
     Account account=JdbcUtils.fetchByName(username);
       if(account.getAccountName()==null)

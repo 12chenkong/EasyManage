@@ -3,6 +3,7 @@ package com.chan.account.model;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Account {
+    private int account_id;
     private String accountName;
     private String userName;
     private String email;
@@ -10,13 +11,16 @@ public class Account {
     private double balance=0;
 
     public Account(){}
-    public Account(String accountName, String userName, String email, String paswwordHahed, double balance) {
+    public Account(String accountName, String userName, String email, String paswwordHahed, double balance,int account_id) {
         this.accountName = accountName;
         this.userName = userName;
         this.email = email;
         this.paswwordHahed = paswwordHahed;
         this.balance = balance;
+        this.account_id=account_id;
     }
+
+
 
     void topUpBalance(double balance){
         this.balance+=balance;
@@ -43,6 +47,14 @@ public class Account {
 
     public String getUserName() {
         return userName;
+    }
+
+    public int getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(int account_id) {
+        this.account_id = account_id;
     }
 
     public void setUserName(String userName) {

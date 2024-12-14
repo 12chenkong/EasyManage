@@ -1,19 +1,18 @@
 package com.chan.account.JDBC;
 
 import com.chan.account.model.Account;
+import com.chan.account.model.Expense;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 public class JdbcUtils {
     static Connection  connect=JdbcConnection.Connection();
     public static void insertAccounts(List<Account> accounts){
-        String query="INSERT INTO accounts(account_name,username,email,password_hashed,balance) " +
-                "VALUES(?,?,?,?,?)";
+        String query="INSERT INTO accounts(account_name,username,email,password_hashed,balance,acocunt_id) " +
+                "VALUES(?,?,?,?,?,?)";
 
         try{
            PreparedStatement preparedStatement=connect.prepareStatement(query);
@@ -23,6 +22,7 @@ public class JdbcUtils {
                preparedStatement.setString(3,account.getEmail());
                preparedStatement.setString(4,account.getPaswwordHahed());
                preparedStatement.setDouble(5,account.getBalance());
+               preparedStatement.setInt(6,account.getAccount_id());
                int rowEffected=preparedStatement.executeUpdate();
                if(rowEffected>0)
                    System.out.println("inserted successfully!");
@@ -35,7 +35,7 @@ public class JdbcUtils {
     }
 
     public static void fetchAllAccounts(){
-        final String query="SELECT* FROM accounts";
+        final String query="SELECT *FROM accounts";
         try {
             Statement stm=connect.createStatement();
             ResultSet rs=stm.executeQuery(query);
@@ -45,6 +45,7 @@ public class JdbcUtils {
                 System.out.println("Email: "+rs.getString("email"));
                 System.out.println("Balance: "+rs.getString("balance")+"$");
                 System.out.println("----------------------------");
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -72,12 +73,12 @@ public class JdbcUtils {
 
     }
 
-    public static boolean DeleteAccountByname(String accoutName){
+    public static boolean DeleteAccountByname(String accountName){
         final String query="DELETE  FROM accounts WHERE account_name= ?";
         boolean status=false;
         try {
             PreparedStatement psm=connect.prepareStatement(query);
-            psm.setString(1,accoutName);
+            psm.setString(1,accountName);
             int rowEffected=psm.executeUpdate();
             if(rowEffected>0)
                 status=true;
@@ -92,5 +93,80 @@ public class JdbcUtils {
 
     }
 
+    public static void addExpense(Expense expense){
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("Enter account ID to play: ");
+        String account_id=scanner.nextLine();
+
+        final String expenseSQL="INSERT INTO expense (date, category, amount, time, account_id) " +
+                "VALUES (?,?,?,?,?) ";
+        final  String updateBalanceSQL="UPDATE accounts SET balance=balance- ? WHERE acocunt_id=? ";
+        final String checkBalanceSQL = "SELECT balance FROM accounts WHERE acocunt_id = ?";
+
+        try {
+            JdbcConnection.Connection().setAutoCommit(false);
+
+            //        Insert a expense record to database
+            try(   PreparedStatement checkBalancepsm= JdbcConnection.Connection().prepareStatement(checkBalanceSQL);
+                   PreparedStatement psm= JdbcConnection.Connection().prepareStatement(expenseSQL);
+                   PreparedStatement updateBalance=JdbcConnection.Connection().prepareStatement(updateBalanceSQL)
+
+            ) {
+//            Check if balance is sufficient
+                checkBalancepsm.setString(1,account_id);
+                ResultSet rs=checkBalancepsm.executeQuery();
+                if(rs.next()){
+                    Double currentBalance=rs.getDouble("balance");
+                    System.out.println(currentBalance);
+                    if(expense.getAmount()>= currentBalance){
+                        System.out.println("Insufficient balance for the expense. ");
+                        throw new SQLException("Insufficient balance for the expense.");
+                    }
+                    System.out.println("execute after if statement");
+                    psm.setString(1,expense.getDate());
+                    psm.setString(2,expense.getCategory());
+                    psm.setDouble(3,expense.getAmount());
+                    psm.setString(4,expense.getTime());
+                    psm.setString(5,account_id);
+                    psm.executeUpdate();
+// deduct money from the account
+                    updateBalance.setDouble(1,expense.getAmount());
+                    updateBalance.setString(2,account_id);
+                    updateBalance.executeUpdate();
+
+                }else {
+                    System.out.println("Account with ID "+ account_id+ " does not exit");
+                    throw new SQLException("Account with ID "+ account_id+" does not exit");
+                }
+                JdbcConnection.Connection().commit();
+                System.out.println("Transaction committed successfully!");
+
+            }
+        }
+        catch (Exception e){
+            if(JdbcConnection.Connection()!=null){
+               try {
+                   JdbcConnection.Connection().rollback();
+                   System.err.println("Transaction rolled back due to an error: " + e.getMessage());
+
+               }catch (SQLException rollBackEx){
+                   rollBackEx.getMessage();
+               }
+
+            }
+
+        }finally {
+            if (JdbcConnection.Connection()!=null){
+                try {
+                    JdbcConnection.Connection().setAutoCommit(true);
+                    JdbcConnection.Connection().close();
+                }catch (Exception ex){
+                    System.err.println("Error closing connection: " + ex.getMessage());
+                }
+
+            }
+        }
+
+    }
 
 }
