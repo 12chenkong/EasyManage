@@ -11,31 +11,22 @@ public class Expense {
     private String category;
     public String time;
 
-    public Expense(){}
-    public Expense(String expsense_id, double amount, String date, String category, String time) {
+    public Expense(){
+
+    }
+    public Expense(String expsense_id, double amount,  String category) {
         this.expsense_id = expsense_id;
         this.amount = amount;
-        this.date = date;
-        this.category = category;
-        this.time = time;
-    }
-
-    public String createDate(){
         LocalDate today=LocalDate.now();
         String currentDate=String.valueOf(today);
-        System.out.println("current Date: "+ currentDate);
-        return currentDate;
-    }
-
-    public String createTime(){
+        this.date = currentDate;
+        this.category = category;
         LocalTime now=LocalTime.now();
         DateTimeFormatter formatter=DateTimeFormatter.ofPattern("hh:mm a");
         String formattedTime=now.format(formatter);
-        System.out.println(formattedTime);
-        return formattedTime;
-
+        this.time=formattedTime;
+        this.time = time;
     }
-
     public String getExpsense_id() {
         return expsense_id;
     }
@@ -86,4 +77,5 @@ public class Expense {
                 ", time='" + time + '\'' +
                 '}';
     }
+
 }

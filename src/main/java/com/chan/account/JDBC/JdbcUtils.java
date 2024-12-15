@@ -40,6 +40,7 @@ public class JdbcUtils {
             Statement stm=connect.createStatement();
             ResultSet rs=stm.executeQuery(query);
             while (rs.next()){
+                System.out.println("Account Id: "+rs.getString("acocunt_id"));
                 System.out.println("Account name: "+rs.getString("account_name"));
                 System.out.println("Username: "+rs.getString("username"));
                 System.out.println("Email: "+rs.getString("email"));
@@ -93,7 +94,7 @@ public class JdbcUtils {
 
     }
 
-    public static void addExpense(Expense expense){
+    public static void addExpenseOperation(Expense expense){
         Scanner scanner=new Scanner(System.in);
         System.out.println("Enter account ID to play: ");
         String account_id=scanner.nextLine();
