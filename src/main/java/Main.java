@@ -20,6 +20,9 @@ public class Main {
             System.out.println("4.Delete account by name");
             System.out.println("5.Add expense");
             System.out.println("6.Ask chatbot ");
+            System.out.println("7.show expense");
+            System.out.println("8.Delete expense");
+            System.out.println("9.exit the program");
             System.out.println("-------------------------");
             System.out.println("Type choice here: ");
             int choice= scanner.nextInt();
@@ -53,12 +56,17 @@ public class Main {
                     // Creating an object of expense
                     Expense expense=new Expense(null,100,category);
                     ExpenseManager.addExpense(expense);
-                    System.out.println(expense);
                     break;
                 case 6:
                     SimpleChatBot.questions();
                     SimpleChatBot.chatBotResponse();
                 break;
+                case 7:
+                    ExpenseManager.showExpenseSummary();
+                    break;
+                case 8:
+                    ExpenseManager.DeleteExpense();
+                    break;
                 default:
                     System.out.println("Invalid input !!!");
             }

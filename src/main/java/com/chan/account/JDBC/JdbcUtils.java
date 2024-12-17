@@ -169,8 +169,6 @@ public class JdbcUtils {
         }
 
     }
-
-
     public  static void summaryExpense(){
         final String sql= """
                 SELECT  account_name,expense.amount,expense.date,category,time FROM accounts
@@ -202,6 +200,23 @@ public class JdbcUtils {
 
 
     }
+
+    public static void deleteExpense(String category){
+        String delete= """
+                DELETE FROM expense WHERE category=?;
+                """;
+        try {
+            PreparedStatement ptm=JdbcConnection.Connection().prepareStatement(delete);
+            ptm.setString(1,category);
+           int row= ptm.executeUpdate();
+           if(row==0)
+               System.out.println("No Expense to delete!!");
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
 
 
 
