@@ -41,7 +41,6 @@ public class Main {
                     System.out.println("Enter account name to delete: ");
                     scanner.nextLine();
                     String name = scanner.nextLine();
-                    System.out.println("In case 4");
                     AccountManager.deleteAccountByName(name);
                     break;
                 case 5:

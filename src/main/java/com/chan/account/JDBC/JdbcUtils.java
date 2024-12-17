@@ -4,6 +4,7 @@ import com.chan.account.model.Account;
 import com.chan.account.model.Expense;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -123,7 +124,6 @@ public class JdbcUtils {
                         System.out.println("Insufficient balance for the expense. ");
                         throw new SQLException("Insufficient balance for the expense.");
                     }
-                    System.out.println("execute after if statement");
                     psm.setString(1,expense.getDate());
                     psm.setString(2,expense.getCategory());
                     psm.setDouble(3,expense.getAmount());
@@ -169,5 +169,40 @@ public class JdbcUtils {
         }
 
     }
+
+
+    public  static void summaryExpense(){
+        final String sql= """
+                SELECT  account_name,expense.amount,expense.date,category,time FROM accounts
+                INNER  JOIN  expense ON accounts.acocunt_id = expense.account_id;
+                """;
+
+        try {
+          PreparedStatement pst= JdbcConnection.Connection().prepareStatement(sql);
+            ResultSet rs=pst.executeQuery();
+            System.out.println("Account name\tAmount\tDate\t\tCategory\tTime");
+            while (rs.next()){
+                double amount=rs.getDouble("amount");
+                String date =rs.getString("date");
+                String category=rs.getString("category");
+                String time=rs.getString("time");
+                String accountName=rs.getString("account_name");
+
+
+                System.out.printf("%s\t\t\t%.2f$\t%s\t%s\t%s\t",accountName,amount,date,category,time);
+                System.out.println();
+
+
+            }
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+
+
+    }
+
+
 
 }

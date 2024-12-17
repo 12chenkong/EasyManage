@@ -11,4 +11,8 @@ public class ExpenseManager {
     public static void addExpense(Expense expense){
         JdbcUtils.addExpenseOperation(expense);
     }
+
+    public static void showExpenseSummary(){
+        System.out.println("Something coming soon!!!");
+    }
 }
